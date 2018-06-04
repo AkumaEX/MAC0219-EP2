@@ -1,6 +1,0 @@
-/home/akumaex/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/181.5087.36/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/akumaex/Documentos/MAC0219/EP2_v2
--- Configuring done
-CMake Error: CMake can not determine linker language for target: EP2
-CMake Error: Cannot determine link language for target "EP2".
--- Generating done
--- Build files have been written to: /home/akumaex/Documentos/MAC0219/EP2_v2/cmake-build-debug

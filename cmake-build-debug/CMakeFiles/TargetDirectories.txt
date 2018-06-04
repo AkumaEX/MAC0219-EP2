@@ -1,3 +1,0 @@
-/home/akumaex/Documentos/MAC0219/EP2_v2/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/akumaex/Documentos/MAC0219/EP2_v2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/akumaex/Documentos/MAC0219/EP2_v2/cmake-build-debug/CMakeFiles/EP2.dir
