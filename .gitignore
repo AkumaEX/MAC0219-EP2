@@ -1,0 +1,10 @@
+# Clion config folders and files
+RSEQ/cmake-build-debug/
+RSEQ/.idea/
+RSEQ/CMakeLists.txt
+RCUDA/cmake-build-debug/
+RCUDA/.idea/
+Gerador/CMakeLists.txt
+Gerador/cmake-build-debug/
+Gerador/.idea/
+Gerador/CMakeLists.txt
