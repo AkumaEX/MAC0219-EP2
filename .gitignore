@@ -1,3 +1,4 @@
 # Clion config folders and files
 cmake-build-debug/
+.idea/
 CMakeLists.txt
