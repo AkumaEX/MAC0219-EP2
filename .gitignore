@@ -4,7 +4,7 @@ RSEQ/.idea/
 RSEQ/CMakeLists.txt
 RCUDA/cmake-build-debug/
 RCUDA/.idea/
-Gerador/CMakeLists.txt
+RCUDA/CMakeLists.txt
 Gerador/cmake-build-debug/
 Gerador/.idea/
 Gerador/CMakeLists.txt
