@@ -7,6 +7,13 @@
 #define GRIDDIM 9
 #define BLOCKDIM 64
 
+inline
+cudaError_t checkCuda(cudaError_t result) {
+    if (result != cudaSuccess)
+        fprintf(stderr, "CUDA Runtime Error: %s\n", cudaGetErrorString(result));
+    return result;
+}
+
 int main(int argc, char *argv[]) {
 
     if (argc != 2) {
@@ -25,18 +32,18 @@ int main(int argc, char *argv[]) {
     int block_dim = (num_threads > BLOCKDIM) ? BLOCKDIM : num_threads;
     int task_size = (int) ceil(num_matrices / block_dim); // numero de elementos que a thread precisa comparar
     printf("num_threads: %d, block_dim: %d, task_size: %d\n", num_threads, block_dim, task_size);
-    cudaMalloc((void**) &structure_d, 9 * num_matrices * sizeof(int));
-    cudaMalloc((void**) &result_d, 9 * sizeof(int));
+    checkCuda(cudaMalloc((void**) &structure_d, 9 * num_matrices * sizeof(int)));
+    checkCuda(cudaMalloc((void**) &result_d, 9 * sizeof(int)));
 
-    cudaMemcpy(structure_d, structure_h, 9 * num_matrices * sizeof(int), cudaMemcpyHostToDevice);
+    checkCuda(cudaMemcpy(structure_d, structure_h, 9 * num_matrices * sizeof(int), cudaMemcpyHostToDevice));
     reduction<<<GRIDDIM, block_dim, block_dim>>>(structure_d, num_matrices, task_size, result_d);
-    cudaMemcpy(result_h, result_d, 9 * sizeof(int), cudaMemcpyDeviceToHost);
+    checkCuda(cudaMemcpy(result_h, result_d, 9 * sizeof(int), cudaMemcpyDeviceToHost));
 
     print_matrix(result_h);
 
     free(structure_h);
-    cudaFree(structure_d);
-    cudaFree(result_d);
+    checkCuda(cudaFree(structure_d));
+    checkCuda(cudaFree(result_d));
 
     return EXIT_SUCCESS;
 }
