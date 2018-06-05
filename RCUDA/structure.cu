@@ -16,7 +16,7 @@ int *load_structure(char *filepath, int *num_matrices) {
         exit(1);
     }
 
-    int *structure = (int *) malloc(9 * *num_matrices * sizeof(int*));
+    int *structure = (int *) malloc(9 * *num_matrices * sizeof(int));
 
     for (j = 0; j < *num_matrices; j++) {
         for (i = 0, id = j; i < 9; i++, id += *num_matrices){
