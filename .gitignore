@@ -8,3 +8,7 @@ RCUDA/CMakeLists.txt
 Gerador/cmake-build-debug/
 Gerador/.idea/
 Gerador/CMakeLists.txt
+**/*.o
+**/main
+*.txt
+**/*.swp
