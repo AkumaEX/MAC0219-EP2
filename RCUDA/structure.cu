@@ -33,16 +33,6 @@ int **load_structure(char *filepath, int *num_matrices) {
     return structure;
 }
 
-void print_structure(int *structure, int num_matrices) {
-    int i;
-    for (i = 0; i < 9 * num_matrices; i++) {
-        if (i != 0 && i % num_matrices == 0)
-            printf("\n");
-        printf("%d\t", structure[i]);
-    }
-    printf("\n");
-}
-
 void print_matrix(int matrix[][3]) {
     int i, j;
     for (i = 0; i < 3; i++) {
