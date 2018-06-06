@@ -12,6 +12,7 @@ RCUDA/main
 Gerador/cmake-build-debug/
 Gerador/.idea/
 Gerador/CMakeLists.txt
-Gerador/*.o
-Gerador/main
-big_input.txt
+**/*.o
+**/main
+*.txt
+**/*.swp
