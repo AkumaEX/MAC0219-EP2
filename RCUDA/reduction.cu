@@ -1,26 +1,31 @@
 #include <stdio.h>
+#include <limits.h>
 #include "reduction.h"
 
-__global__ void reduction(int *structure, int num_matrices, int task_size, int *result) {
+__global__ void reduction(int *structure, int *result, int N) {
 
-    extern __shared__ int sdata[];  // guarda o minimo que uma thread consegue encontrar
-    int tid = threadIdx.x;
-    int bid = blockIdx.x;
+    extern __shared__ int sdata[];  
+	int i = threadIdx.x;
+	int tid = blockIdx.x*blockDim.x+threadIdx.x;
+	
+	int min = INT_MAX;
+	while(tid < N) {
+		min = imin(min, structure[tid]);
+		tid += blockDim.x*gridDim.x;
+	}
 
-    int start = (tid * task_size) + (num_matrices * bid);  // indice da estrutura que a thread comeca trabalhar
-    int finish = (start + task_size < num_matrices * (bid + 1)) ? start + task_size : num_matrices * (bid + 1); // indice da estrutura onde a thread precisa parar
+	sdata[i] = min;	
+	__syncthreads();
 
-    sdata[tid] = structure[start]; // o menor elemento inicial e o primeiro elemento
-    __syncthreads();
+	int s = blockDim.x/2;
+	while(s != 0) {
+		if(i < s) {
+			sdata[i] = imin(sdata[i], sdata[i+s]);
+		}
 
-    int i; // cada thread percorre os elementos e vai guardando o minimo no indice da sua thread
-    for (i = start + 1; i < finish; i++)
-        sdata[tid] = sdata[tid] ^ ((structure[i] ^ sdata[tid]) & -(structure[i] < sdata[tid]));
-    __syncthreads();
+		__syncthreads();
+		s /= 2;
+	}
 
-    if (tid == 0) { // a thread zero sozinha percorre todos os elementos minimos e devolve o menor deles
-        for (i = 1; i < blockDim.x; i++)
-            sdata[0] = sdata[0] ^ ((sdata[i] ^ sdata[0]) & -(sdata[i] < sdata[0]));
-        result[bid] = sdata[0];
-    }
+	if(i == 0) result[blockIdx.x] = sdata[0];
 }
