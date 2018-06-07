@@ -12,6 +12,7 @@ cudaError_t checkCuda(cudaError_t result) {
 }
 
 int main(int argc, char *argv[]) {
+	int i, j, k;
 
     if (argc != 2) {
         printf("Uso: %s <caminho_lista_matrizes>\n", argv[0]);
@@ -27,9 +28,11 @@ int main(int argc, char *argv[]) {
 
     int *structure_d[9];
 	int *result_d[9];
-	int result_h[9][GridSize];
+	int *result_h[9];
+	for(i = 0; i < 9; i++)
+		result_h[i] = new int[GridSize];
 	
-	int i, j, k;
+	cudaSetDevice(0);
 	for(i = 0; i < 9; i ++) {
 		checkCuda(cudaMalloc((void**) &structure_d[i], num_matrices * sizeof(int)));
 		checkCuda(cudaMalloc((void**) &result_d[i], GridSize * sizeof(int)));
@@ -59,6 +62,7 @@ int main(int argc, char *argv[]) {
 	
 	for(i = 0; i < 9; i++) {
 		free(structure_h[i]);
+		delete [] result_h[i];
 		checkCuda(cudaFree(structure_d[i]));
 		checkCuda(cudaFree(result_d[i]));
 	}
