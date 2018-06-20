@@ -16,3 +16,5 @@ Gerador/CMakeLists.txt
 **/main
 *.txt
 **/*.swp
+*.pdf
+*.zip
