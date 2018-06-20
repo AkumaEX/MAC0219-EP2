@@ -1,3 +1,6 @@
+#Caio Henrique Silva Ramos - NUSP 9292991
+#Julio Kenji Ueda - NUSP 9298281
+
 CC		= nvcc
 CFLAGS	= -O3 -Xptxas --opt-level=3 -arch sm_30 -g
 LDFLAGS = -lm

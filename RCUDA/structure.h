@@ -1,3 +1,6 @@
+//Caio Henrique Silva Ramos - NUSP 9292991
+//Julio Kenji Ueda - NUSP 9298281
+
 #ifndef EP2_STRUCTURE_H
 #define EP2_STRUCTURE_H
 

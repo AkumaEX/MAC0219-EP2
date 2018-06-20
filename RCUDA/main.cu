@@ -1,9 +1,13 @@
+//Caio Henrique Silva Ramos - NUSP 9292991
+//Julio Kenji Ueda - NUSP 9298281
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include "structure.h"
 #include "reduction.h"
 
+//Check for errors
 inline
 cudaError_t checkCuda(cudaError_t result) {
     if (result != cudaSuccess)
@@ -32,6 +36,7 @@ int main(int argc, char *argv[]) {
 	for(i = 0; i < 9; i++)
 		result_h[i] = new int[GridSize];
 	
+	//Calls one kernel for each position of the matrix
 	cudaSetDevice(0);
 	for(i = 0; i < 9; i ++) {
 		checkCuda(cudaMalloc((void**) &structure_d[i], num_matrices * sizeof(int)));
@@ -42,12 +47,10 @@ int main(int argc, char *argv[]) {
 		checkCuda(cudaMemcpy(result_h[i], result_d[i], GridSize  * sizeof(int), cudaMemcpyDeviceToHost));
 		
 	}
-	//cudaDeviceSynchronize();
-
-	//for(i = 0; i < 9; i++)
 
 	int final[3][3];
 
+	//Finishes the reduction
 	for(i = 0; i < 3; i++) {
 		for(j = 0; j < 3; j++) {
 			int min = result_h[i*3+j][0];
@@ -58,8 +61,10 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	//Prints the matrix
     print_matrix(final);
 	
+	//Frees structures used
 	for(i = 0; i < 9; i++) {
 		free(structure_h[i]);
 		delete [] result_h[i];

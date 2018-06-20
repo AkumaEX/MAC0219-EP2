@@ -1,3 +1,6 @@
+//Caio Henrique Silva Ramos - NUSP 9292991
+//Julio Kenji Ueda - NUSP 9298281
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "structure.h"
