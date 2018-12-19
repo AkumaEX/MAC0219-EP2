@@ -1,9 +1,12 @@
+//Caio Henrique Silva Ramos - NUSP 9292991
+//Julio Kenji Ueda - NUSP 9298281
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "structure.h"
 
-int *load_structure(char *filepath, int *num_matrices) {
-    int i, j, id;
+int **load_structure(char *filepath, int *num_matrices) {
+    int i, j;
     FILE *file = fopen(filepath, "r");
 
     if (file == NULL) {
@@ -16,11 +19,13 @@ int *load_structure(char *filepath, int *num_matrices) {
         exit(1);
     }
 
-    int *structure = (int *) malloc(9 * *num_matrices * sizeof(int));
+    int **structure = (int **) malloc(9 * sizeof(int*));
+	for(i = 0; i < 9; i++)
+		structure[i] = (int*)malloc(sizeof(int) * *num_matrices);
 
-    for (j = 0; j < *num_matrices; j++) {
-        for (i = 0, id = j; i < 9; i++, id += *num_matrices){
-            if (!fscanf(file, "%d", &structure[id])) {
+    for (i = 0; i < *num_matrices; i++) {
+        for (j = 0; j < 9; j++){
+            if (!fscanf(file, "%d", &structure[j][i])) {
                 printf("Problema ao ler o arquivo, saindo...\n");
                 exit(1);
             }
@@ -31,22 +36,12 @@ int *load_structure(char *filepath, int *num_matrices) {
     return structure;
 }
 
-void print_structure(int *structure, int num_matrices) {
-    int i;
-    for (i = 0; i < 9 * num_matrices; i++) {
-        if (i != 0 && i % num_matrices == 0)
-            printf("\n");
-        printf("%d\t", structure[i]);
+void print_matrix(int matrix[][3]) {
+    int i, j;
+    for (i = 0; i < 3; i++) {
+		for(j = 0; j < 3; j++) {
+			printf("%d\t", matrix[i][j]);
+		}
+		printf("\n");
     }
-    printf("\n");
-}
-
-void print_matrix(int *matrix) {
-    int i;
-    for (i = 0; i < 9; i++) {
-        if (i != 0 && i % 3 == 0)
-            printf("\n");
-        printf("%d\t", matrix[i]);
-    }
-    printf("\n");
 }

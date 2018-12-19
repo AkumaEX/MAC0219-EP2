@@ -1,12 +1,13 @@
+//Caio Henrique Silva Ramos - NUSP 9292991
+//Julio Kenji Ueda - NUSP 9298281
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include "structure.h"
 #include "reduction.h"
 
-#define GRIDDIM 9
-#define BLOCKDIM 64
-
+//Check for errors
 inline
 cudaError_t checkCuda(cudaError_t result) {
     if (result != cudaSuccess)
@@ -15,6 +16,7 @@ cudaError_t checkCuda(cudaError_t result) {
 }
 
 int main(int argc, char *argv[]) {
+	int i, j, k;
 
     if (argc != 2) {
         printf("Uso: %s <caminho_lista_matrizes>\n", argv[0]);
@@ -24,26 +26,52 @@ int main(int argc, char *argv[]) {
     char *filepath = argv[1];
 
     int num_matrices;
-    int *structure_h = load_structure(filepath, &num_matrices);
-    int *structure_d;
-    int result_h[9];
-    int *result_d;
-    int num_threads = (int) ceil(num_matrices / 2);
-    int block_dim = (num_threads > BLOCKDIM) ? BLOCKDIM : num_threads;
-    int task_size = (int) ceil(num_matrices / block_dim); // numero de elementos que a thread precisa comparar
-    printf("num_threads: %d, block_dim: %d, task_size: %d\n", num_threads, block_dim, task_size);
-    checkCuda(cudaMalloc((void**) &structure_d, 9 * num_matrices * sizeof(int)));
-    checkCuda(cudaMalloc((void**) &result_d, 9 * sizeof(int)));
+    int **structure_h = load_structure(filepath, &num_matrices);
+	int BlockSize = 64;
+	int GridSize = (num_matrices+BlockSize-1)/BlockSize;
 
-    checkCuda(cudaMemcpy(structure_d, structure_h, 9 * num_matrices * sizeof(int), cudaMemcpyHostToDevice));
-    reduction<<<GRIDDIM, block_dim, block_dim>>>(structure_d, num_matrices, task_size, result_d);
-    checkCuda(cudaMemcpy(result_h, result_d, 9 * sizeof(int), cudaMemcpyDeviceToHost));
+    int *structure_d[9];
+	int *result_d[9];
+	int *result_h[9];
+	for(i = 0; i < 9; i++)
+		result_h[i] = new int[GridSize];
+	
+	//Calls one kernel for each position of the matrix
+	cudaSetDevice(0);
+	for(i = 0; i < 9; i ++) {
+		checkCuda(cudaMalloc((void**) &structure_d[i], num_matrices * sizeof(int)));
+		checkCuda(cudaMalloc((void**) &result_d[i], GridSize * sizeof(int)));
 
-    print_matrix(result_h);
+		checkCuda(cudaMemcpy(structure_d[i], structure_h[i], num_matrices * sizeof(int), cudaMemcpyHostToDevice));
+		reduction<<<GridSize, BlockSize, BlockSize>>>(structure_d[i], result_d[i], num_matrices);
+		checkCuda(cudaMemcpy(result_h[i], result_d[i], GridSize  * sizeof(int), cudaMemcpyDeviceToHost));
+		
+	}
 
+	int final[3][3];
+
+	//Finishes the reduction
+	for(i = 0; i < 3; i++) {
+		for(j = 0; j < 3; j++) {
+			int min = result_h[i*3+j][0];
+			for(k = 1; k < GridSize; k++) {
+				if(min > result_h[i*3+j][k]) min = result_h[i*3+j][k];
+			}
+			final[i][j] = min;
+		}
+	}
+
+	//Prints the matrix
+    print_matrix(final);
+	
+	//Frees structures used
+	for(i = 0; i < 9; i++) {
+		free(structure_h[i]);
+		delete [] result_h[i];
+		checkCuda(cudaFree(structure_d[i]));
+		checkCuda(cudaFree(result_d[i]));
+	}
     free(structure_h);
-    checkCuda(cudaFree(structure_d));
-    checkCuda(cudaFree(result_d));
 
     return EXIT_SUCCESS;
 }
